@@ -22,5 +22,7 @@ Options:
   --output TEXT                   Output file name  [default: output.pdf]
   --platform [Blogspot|Wordpress]
                                   Platform used to host the blog  [required]
+  --tag TEXT                      Only the posts with that tag (or tags if the
+                                  option is repeated) will be included
   --help                          Show this message and exit.
 ```

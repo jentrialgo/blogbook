@@ -59,13 +59,17 @@ def print_entry_summary(entries):
         entry_index += 1
 
 
-def convert_to_pdf(entries, platform, output_filename,):
+def convert_to_pdf(entries, platform, output_filename, required_tags):
     entry_index = 1
     all_text = ""
     for entry in entries:
         tags = "[None]"
         if "tags" in entry.keys():
             tags = [tag.term for tag in entry.tags]
+        
+        if not all(x in tags for x in required_tags):
+            continue  # Skip this post because it doesn't have the tags
+
         print(f"[{entry_index}] ({entry.published[:10]}) {entry.title} {tags}")
         entry_index += 1
 
@@ -93,9 +97,11 @@ def convert_to_pdf(entries, platform, output_filename,):
 @click.option('--platform', type=click.Choice(['Blogspot', "Wordpress"],
     case_sensitive=False), required=True,
     help='Platform used to host the blog')
-def main(base_url, output, platform):
+@click.option('--tag', type=str, multiple=True,
+    help='Only the posts with that tag (or tags if the option is repeated) will be included')
+def main(base_url, output, platform, tag):
     entries = get_entries(base_url, platform)
-    convert_to_pdf(entries, platform, output)
+    convert_to_pdf(entries, platform, output, tag)
 
 
 if __name__ == "__main__":
