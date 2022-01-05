@@ -59,7 +59,7 @@ def print_entry_summary(entries):
         entry_index += 1
 
 
-def convert_to_pdf(entries, platform, output_filename, required_tags):
+def convert_to_pdf(entries, platform, output_filename, required_tags, generate_html):
     entry_index = 1
     all_text = ""
     for entry in entries:
@@ -88,6 +88,20 @@ def convert_to_pdf(entries, platform, output_filename, required_tags):
     with console.status("Generating PDF...") as status:
         weasyprint.HTML(string=all_text).write_pdf(output_filename)
 
+    if generate_html:
+        generate_html_file(all_text, output_filename)
+
+
+def generate_html_file(html_content, output_filename):
+    if output_filename.endswith(".pdf"):
+        output_filename = output_filename[:-4] + ".html"
+
+    with open(output_filename, "w") as f:
+        full_html = f"<!DOCTYPE html>"\
+                    f"<html><head><title>{output_filename[:-4]}</title></head>\n"\
+                    f"<body>\n" + html_content + "\n</body>\n</html>"
+        f.write(full_html)
+
 
 @click.command()
 @click.option('--base-url', type=str, required=True,
@@ -99,9 +113,11 @@ def convert_to_pdf(entries, platform, output_filename, required_tags):
     help='Platform used to host the blog')
 @click.option('--tag', type=str, multiple=True,
     help='Only the posts with that tag (or tags if the option is repeated) will be included')
-def main(base_url, output, platform, tag):
+@click.option('--generate-html/--no-generate-html', default=False,
+    help='Generate also a HTML file')
+def main(base_url, output, platform, tag, generate_html):
     entries = get_entries(base_url, platform)
-    convert_to_pdf(entries, platform, output, tag)
+    convert_to_pdf(entries, platform, output, tag, generate_html)
 
 
 if __name__ == "__main__":

@@ -24,5 +24,7 @@ Options:
                                   Platform used to host the blog  [required]
   --tag TEXT                      Only the posts with that tag (or tags if the
                                   option is repeated) will be included
+  --generate-html / --no-generate-html
+                                  Generate also a HTML file
   --help                          Show this message and exit.
 ```
