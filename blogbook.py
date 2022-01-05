@@ -1,7 +1,11 @@
+from datetime import datetime
 import feedparser
 import weasyprint
 import click
 from rich.progress import Progress
+
+import locale
+locale.setlocale(locale.LC_ALL, '')
 
 def get_blogspot_entries(base_url):
 
@@ -53,7 +57,9 @@ def convert_to_pdf(entries):
         print(f"[{entry_index}] ({entry.published[:10]}) {entry.title} {tags}")
         entry_index += 1
 
-        headers = f"<h1>{entry.title}</h1>\n\n<h2>{entry.published}</h2>"
+        date = datetime.fromisoformat(entry.published)
+        date_str = date.strftime("%c").capitalize()
+        headers = f"<h1>{entry.title}</h1>\n\n<h2>{date_str}</h2>"
         all_text += headers  + entry.content[0].value + "\n\n"
 
     weasyprint.HTML(string=all_text).write_pdf("output.pdf")
