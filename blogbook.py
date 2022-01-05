@@ -8,6 +8,7 @@ from rich.console import Console
 import locale
 locale.setlocale(locale.LC_ALL, '')
 
+
 def get_entries(base_url, platform):
     if platform.lower() == "blogspot":
         feed_url = base_url + "/feeds/posts/default/"
@@ -82,6 +83,7 @@ def convert_to_pdf(entries, platform, output_filename,):
     console = Console()
     with console.status("Generating PDF...") as status:
         weasyprint.HTML(string=all_text).write_pdf(output_filename)
+
 
 @click.command()
 @click.option('--base-url', type=str, required=True,
