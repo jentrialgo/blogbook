@@ -47,7 +47,7 @@ def print_entry_summary(entries):
         entry_index += 1
 
 
-def convert_to_pdf(entries):
+def convert_to_pdf(entries, output_filename):
     entry_index = 1
     all_text = ""
     for entry in entries:
@@ -62,14 +62,19 @@ def convert_to_pdf(entries):
         headers = f"<h1>{entry.title}</h1>\n\n<h2>{date_str}</h2>"
         all_text += headers  + entry.content[0].value + "\n\n"
 
-    weasyprint.HTML(string=all_text).write_pdf("output.pdf")
+    if not output_filename.endswith(".pdf"):
+        output_filename += ".pdf"
+
+    weasyprint.HTML(string=all_text).write_pdf(output_filename)
 
 @click.command()
 @click.option('--base-url', type=str, required=True,
     help='Base URL of the blog. For instance: http://example.blogspot.com')
-def main(base_url):
+@click.option('--output', type=str, default="output.pdf", show_default=True,
+    help='Output file name')
+def main(base_url, output):
     entries = get_blogspot_entries(base_url)
-    convert_to_pdf(entries)
+    convert_to_pdf(entries, output)
 
 
 if __name__ == "__main__":
